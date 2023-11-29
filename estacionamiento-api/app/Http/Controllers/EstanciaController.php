@@ -12,9 +12,40 @@ class EstanciaController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $query = Estancia::with(
+            'vehiculo:id,placa,tipo_vehiculo_id',
+            'vehiculo.tipo_vehiculo:id,tipo_vehiculo,tarifa'
+        );
+
+        if ($request->has('search') && !empty(trim($request->input('search')))) {
+            $searchTerms = explode(' ', $request->input('search'));
+
+            $query->where(function ($query) use ($searchTerms) {
+                foreach ($searchTerms as $term) {
+                    if (!empty(trim($term))) {
+                        $query->where(function ($subQuery) use ($term) {
+                            $subQuery->orWhere('entrada', 'like', "%{$term}%");
+                            $subQuery->orWhere('salida', 'like', "%{$term}%");
+                            $subQuery->orWhereHas('vehiculo', function ($q) use ($term) {
+                                $q->where('placa', 'like', "%{$term}%");
+                            });
+                            $subQuery->orWhereHas('vehiculo.tipo_vehiculo', function ($q) use ($term) {
+                                $q->where('tipo_vehiculo', 'like', "%{$term}%");
+                            });
+                            $subQuery->orWhereHas('vehiculo.tipo_vehiculo', function ($q) use ($term) {
+                                $q->where('tarifa', 'like', "%{$term}%");
+                            });
+                        });
+                    }
+                }
+            });
+        }
+
+        return [
+            'data' => $query->orderBy('salida')->paginate(20),
+        ];
     }
 
     /**
