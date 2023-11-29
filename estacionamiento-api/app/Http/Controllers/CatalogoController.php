@@ -16,6 +16,7 @@ use App\Models\CuentaBancaria;
 use App\Models\Departamento;
 use App\Models\EjercicioActivo;
 use App\Models\EjercicioPasivo;
+use App\Models\Estancia;
 use App\Models\FNP;
 use App\Models\Jugada;
 use App\Models\MedioFisico;
@@ -33,6 +34,11 @@ class CatalogoController extends Controller
     public function tipos_vehiculos()
     {
         return TipoVehiculo::select('id', 'tipo_vehiculo')->get();
+    }
+
+    public function vehiculos_adentro()
+    {
+        return Estancia::with('vehiculo:id,placa,tipo_vehiculo_id', 'vehiculo.tipo_vehiculo:id,tarifa')->whereNull('salida')->get();
     }
 
 }

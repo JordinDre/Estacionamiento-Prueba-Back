@@ -66,9 +66,16 @@ class EstanciaController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Estancia $estancia)
+    public function update(Request $request, $id)
     {
-        //
+        $estancia = Estancia::find($id);
+        $estancia->salida = Carbon::now()->format('Y-m-d H:i:s');
+        $estancia->save();
+
+        return [
+            'message' => 'Salida Guardada Correctamente',
+            'status' => true,
+        ];
     }
 
     /**

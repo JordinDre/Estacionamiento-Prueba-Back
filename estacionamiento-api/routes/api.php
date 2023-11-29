@@ -51,5 +51,6 @@ Route::middleware('auth:sanctum')->group(function () {
     /* CATALOGO */
     Route::prefix('catalogo')->group(function () {
         Route::get('/tipos_vehiculos',  [CatalogoController::class, 'tipos_vehiculos']);
+        Route::get('/vehiculos_adentro',  [CatalogoController::class, 'vehiculos_adentro']);
     });
 });
