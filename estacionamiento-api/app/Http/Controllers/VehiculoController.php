@@ -10,9 +10,31 @@ class VehiculoController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $query = Vehiculo::with(
+            'tipo_vehiculo'
+        );
+
+        if ($request->has('search') && !empty(trim($request->input('search')))) {
+            $searchTerms = explode(' ', $request->input('search'));
+
+            $query->where(function ($query) use ($searchTerms) {
+                foreach ($searchTerms as $term) {
+                    if (!empty(trim($term))) {
+                        $query->orWhere('placa', 'like', "%{$term}%")
+                            ->orWhereHas('tipo_vehiculo', function ($subQuery) use ($term) {
+                                $subQuery->where('tipo_vehiculo', 'like', "%{$term}%")
+                                    ->orWhere('tarifa', 'like', "%{$term}%");
+                            });
+                    }
+                }
+            });
+        }
+
+        return [
+            'data' => $query->orderByDesc('id')->paginate(12),
+        ];
     }
 
     /**
@@ -20,7 +42,15 @@ class VehiculoController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $vehiculo = new Vehiculo();
+        $vehiculo->placa = $request->placa;
+        $vehiculo->tipo_vehiculo_id = $request->tipo_vehiculo['id'];
+        $vehiculo->save();
+
+        return [
+            'message' => 'El Vehículo fue creado correctamente',
+            'status' => true,
+        ];
     }
 
     /**
@@ -29,8 +59,6 @@ class VehiculoController extends Controller
     public function show($placa)
     {
         $vehiculo = Vehiculo::select('tipo_vehiculo_id')->where('placa', $placa)->first();
-
-        // Comprueba si el vehículo tiene un tipo_vehiculo_id asociado y devuelve 1, de lo contrario devuelve 0
         return ['tipo_vehiculo_id' => $vehiculo && $vehiculo->tipo_vehiculo_id ? 1 : 0];
     }
 
@@ -48,16 +76,31 @@ class VehiculoController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Vehiculo $vehiculo)
+    public function update(Request $request, $id)
     {
-        //
+        $vehiculo = Vehiculo::find($id);
+        $vehiculo->placa = $request->placa;
+        $vehiculo->tipo_vehiculo_id = $request->tipo_vehiculo['id'];
+        $vehiculo->save();
+
+        return [
+            'message' => 'El Vehículo fue actualizado correctamente',
+            'status' => true,
+        ];
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Vehiculo $vehiculo)
+    public function destroy($id)
     {
-        //
+        $vehiculo = Vehiculo::find($id);
+        $vehiculo->estado = 0;
+        $vehiculo->save();
+
+        return [
+            'message' => 'El Vehículo fue desabilitado correctamente',
+            'status' => true,
+        ];
     }
 }
