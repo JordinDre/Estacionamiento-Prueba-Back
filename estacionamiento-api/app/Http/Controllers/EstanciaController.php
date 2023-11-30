@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Estancias\EntradaRequest;
 use App\Models\Estancia;
 use App\Models\Vehiculo;
 use Illuminate\Http\Request;
@@ -51,7 +52,7 @@ class EstanciaController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(EntradaRequest $request)
     {
         $vehiculo = Vehiculo::where('placa', $request->placa)->first();
 
@@ -60,6 +61,10 @@ class EstanciaController extends Controller
             $estancia->entrada = Carbon::now()->format('Y-m-d H:i:s');
             $estancia->vehiculo_id = $vehiculo->id;
             $estancia->save();
+            return [
+                'message' => 'Registro de Entrada para Vehiculo con Placa ' . $request->placa,
+                'status' => true,
+            ];
         } else {
             $nuevo_vehiculo = new Vehiculo();
             $nuevo_vehiculo->placa = $request->placa;
@@ -70,12 +75,12 @@ class EstanciaController extends Controller
             $estancia->entrada = Carbon::now()->format('Y-m-d H:i:s');
             $estancia->vehiculo_id = $nuevo_vehiculo->id;
             $estancia->save();
-        }
 
-        return [
-            'message' => 'Entrada Guardada Correctamente',
-            'status' => true,
-        ];
+            return [
+                'message' => 'Guardado Y Registro de Entrada para Vehiculo con Placa ' . $request->placa,
+                'status' => true,
+            ];
+        }
     }
 
     /**

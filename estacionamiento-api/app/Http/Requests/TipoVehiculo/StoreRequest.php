@@ -6,23 +6,35 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class StoreRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array|string>
+     * @return array<string, \Illuminate\Contracts\Validation\Rule|array|string>
      */
     public function rules(): array
     {
         return [
-            //
+            'tipo_vehiculo' => 'required',
+            'tarifa' => 'required|numeric',
+            // Resto de tus reglas...
+        ];
+    }
+
+    public function withValidator($validator)
+    {
+    }
+
+    public function messages()
+    {
+        return [
+            'tipo_vehiculo.required' => 'El Tipo de Vehículo es Obligatorio',
+            'tarifa.required' => 'La Tarifa es Obligatoria',
+            'tarifa.numeric' => 'La Tarifa debe ser un valor numérico',
         ];
     }
 }

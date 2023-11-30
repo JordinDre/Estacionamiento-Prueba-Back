@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Vehiculo\StoreRequest;
+use App\Http\Requests\Vehiculo\UpdateRequest;
 use App\Models\Vehiculo;
 use Illuminate\Http\Request;
 
@@ -40,7 +42,7 @@ class VehiculoController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreRequest $request)
     {
         $vehiculo = new Vehiculo();
         $vehiculo->placa = $request->placa;
@@ -76,7 +78,7 @@ class VehiculoController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $id)
+    public function update(UpdateRequest $request, $id)
     {
         $vehiculo = Vehiculo::find($id);
         $vehiculo->placa = $request->placa;
