@@ -3,20 +3,12 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\UserController;
 use App\Http\Controllers\CatalogoController;
-use App\Http\Controllers\CitaController;
-use App\Http\Controllers\EvaluacionController;
-use App\Http\Controllers\MedicamentoController;
-use App\Http\Controllers\PacienteController;
-use App\Http\Controllers\PacientePlanEducacionalController;
-use App\Http\Controllers\PacienteTratamientoController;
-use App\Http\Controllers\PlanEducacionalController;
-use App\Http\Controllers\RecetaController;
-use App\Http\Controllers\TipoTratamientoController;
+use App\Http\Controllers\EstanciaController;
+use App\Http\Controllers\ReporteController;
 use App\Http\Controllers\TipoVehiculoController;
-use App\Http\Controllers\TratamientoController;
-use App\Models\PlanEducacional;
+use App\Http\Controllers\VehiculoController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -40,7 +32,19 @@ Route::middleware('auth:sanctum')->group(function () {
         return $request->user();
     });
 
-
     Route::resource('tipos_vehiculos', TipoVehiculoController::class);
+    Route::resource('vehiculos', VehiculoController::class);
+    Route::resource('estancias', EstanciaController::class);
+    Route::get('vehiculos/buscar/{placa}', [VehiculoController::class, 'buscar']);
 
+    /* CATALOGO */
+    Route::prefix('catalogo')->group(function () {
+        Route::get('/tipos_vehiculos',  [CatalogoController::class, 'tipos_vehiculos']);
+        Route::get('/vehiculos_adentro',  [CatalogoController::class, 'vehiculos_adentro']);
+    });
+
+    Route::prefix('reporte')->group(function () {
+        Route::get('/pagos_residentes',  [ReporteController::class, 'pagos_residentes']);
+        Route::get('/pagos_residentes_pdf',  [ReporteController::class, 'pagos_residentes_pdf']);
+    });
 });

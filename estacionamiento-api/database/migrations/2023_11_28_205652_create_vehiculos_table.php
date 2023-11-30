@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('vehiculos', function (Blueprint $table) {
             $table->id();
             $table->string("placa")->nullable();
+            $table->boolean("estado")->default(1)->nullable();
             $table->unsignedBigInteger('tipo_vehiculo_id')->nullable();
             $table->foreign('tipo_vehiculo_id')->references('id')->on('tipo_vehiculos');
             $table->timestamps();
