@@ -45,5 +45,6 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::prefix('reporte')->group(function () {
         Route::get('/pagos_residentes',  [ReporteController::class, 'pagos_residentes']);
+        Route::get('/pagos_residentes_pdf',  [ReporteController::class, 'pagos_residentes_pdf']);
     });
 });

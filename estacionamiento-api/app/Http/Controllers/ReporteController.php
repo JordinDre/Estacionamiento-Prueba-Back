@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Reportes\PagosPDF;
 use Carbon\Carbon;
 use App\Models\Estancia;
 use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class ReporteController extends Controller
 {
@@ -52,6 +54,17 @@ class ReporteController extends Controller
             })
             ->values();
 
-        return response()->json($estancias);
+        return $estancias;
+    }
+
+    public function pagos_residentes_pdf(Request $request)
+    {
+        $fecha_inicial = $request->input('fecha_inicial');
+        $fecha_final = $request->input('fecha_final');
+        $estancias = $this->pagos_residentes($request);
+
+        $pdf = PDF::loadView('impresiones.pagos', ['estancias' => $estancias,  'fecha_inicial' =>  $fecha_inicial, 'fecha_final' =>  $fecha_final]);
+
+        return $pdf->stream('pagos_residentes_pdf.pdf');
     }
 }
