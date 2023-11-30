@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CatalogoController;
 use App\Http\Controllers\EstanciaController;
+use App\Http\Controllers\ReporteController;
 use App\Http\Controllers\TipoVehiculoController;
 use App\Http\Controllers\VehiculoController;
 
@@ -40,5 +41,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::prefix('catalogo')->group(function () {
         Route::get('/tipos_vehiculos',  [CatalogoController::class, 'tipos_vehiculos']);
         Route::get('/vehiculos_adentro',  [CatalogoController::class, 'vehiculos_adentro']);
+    });
+
+    Route::prefix('reporte')->group(function () {
+        Route::get('/pagos_residentes',  [ReporteController::class, 'pagos_residentes']);
     });
 });

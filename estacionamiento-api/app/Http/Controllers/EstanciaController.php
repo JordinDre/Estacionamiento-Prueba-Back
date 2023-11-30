@@ -109,7 +109,7 @@ class EstanciaController extends Controller
         $estancia->save();
 
         return [
-            'message' => 'Salida Guardada Correctamente',
+            'message' => 'Registrada la Salida para Vehiculo',
             'status' => true,
         ];
     }
