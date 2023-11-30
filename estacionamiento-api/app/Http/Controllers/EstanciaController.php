@@ -45,7 +45,7 @@ class EstanciaController extends Controller
         }
 
         return [
-            'data' => $query->orderBy('salida')->paginate(20),
+            'data' => $query->orderBy('salida')->orderByDesc('id')->paginate(20),
         ];
     }
 

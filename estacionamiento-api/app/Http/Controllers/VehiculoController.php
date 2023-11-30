@@ -83,6 +83,7 @@ class VehiculoController extends Controller
         $vehiculo = Vehiculo::find($id);
         $vehiculo->placa = $request->placa;
         $vehiculo->tipo_vehiculo_id = $request->tipo_vehiculo['id'];
+        $vehiculo->estado = 1;
         $vehiculo->save();
 
         return [
