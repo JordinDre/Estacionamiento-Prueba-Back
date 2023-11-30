@@ -28,9 +28,8 @@ class EntradaRequest extends FormRequest
     public function withValidator($validator)
     {
         $validator->after(function ($validator) {
-            // Verifica si la placa ya está en la tabla de estancias con salida en null
-            if ($this->has('placa')) {
-                $placa = $this->input('placa');
+            $placa = $this->input('placa');
+            if ($this->has('placa') && Vehiculo::where('placa', $placa)->first()) {
                 $estanciaExistente = Estancia::where('vehiculo_id', Vehiculo::where('placa', $placa)->first()->id)
                     ->whereNull('salida')
                     ->first();
