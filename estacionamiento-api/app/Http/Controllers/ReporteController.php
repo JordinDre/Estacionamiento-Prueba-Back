@@ -12,17 +12,26 @@ class ReporteController extends Controller
     {
         $fecha_inicial = $request->input('fecha_inicial');
         $fecha_final = $request->input('fecha_final');
-        $tipo_vehiculo = $request->input('tipo_vehiculo');
+        $tipo_vehiculo_id = $request->input('tipo_vehiculo');
 
-        $estancias = Estancia::select('id', 'entrada', 'salida', 'vehiculo_id')
-            ->with('vehiculo:id,tipo_vehiculo_id,placa', 'vehiculo.tipo_vehiculo:id,tipo_vehiculo,tarifa')
-            ->when($fecha_inicial, function ($query) use ($fecha_inicial) {
-                return $query->where('entrada', '>=', $fecha_inicial);
-            })
-            ->when($fecha_final, function ($query) use ($fecha_final) {
-                return $query->where('salida', '<=', $fecha_final);
-            })
-            ->get()
+        $estanciasQuery = Estancia::select('id', 'entrada', 'salida', 'vehiculo_id')
+            ->with('vehiculo:id,tipo_vehiculo_id,placa', 'vehiculo.tipo_vehiculo:id,tipo_vehiculo,tarifa');
+
+        if ($fecha_inicial) {
+            $estanciasQuery->where('entrada', '>=', $fecha_inicial);
+        }
+
+        if ($fecha_final) {
+            $estanciasQuery->where('salida', '<=', $fecha_final);
+        }
+
+        if ($tipo_vehiculo_id) {
+            $estanciasQuery->whereHas('vehiculo', function ($query) use ($tipo_vehiculo_id) {
+                $query->where('tipo_vehiculo_id', $tipo_vehiculo_id);
+            });
+        }
+
+        $estancias = $estanciasQuery->get()
             ->mapToGroups(function ($estancia) {
                 $entrada = Carbon::parse($estancia->entrada);
                 $salida = Carbon::parse($estancia->salida);
@@ -41,7 +50,7 @@ class ReporteController extends Controller
                     'duracion_total_minutos' => $duracionTotal,
                 ];
             })
-            ->values(); // Esto reindexa la colección
+            ->values();
 
         return response()->json($estancias);
     }
